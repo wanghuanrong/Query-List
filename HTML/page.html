@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>easy-ui_list2</title>
+    <link rel="stylesheet" href="../themes/default/easyui.css">
+    <link rel="stylesheet" href="../themes/icon.css">
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="../js/easyui-lang-zh_CN.js"></script>
+</head>
+<style>
+</style>
+
+<body>
+    <div>
+        <!-- 主页 顶部 表单 -->
+        <div style="margin-bottom: 10px;">
+            <form action="" method="get" style="width: 100%;">
+                <fieldset style="border: 1px solid rgb(172, 167, 167); border-radius: 5px;">
+                    <legend>基本信息</legend>
+                    单据日期: <input type="text" class="easyui-datebox" size="20">
+
+                    <div style="display: inline;" id="txt_JHCK">
+                        进货仓库: <input type="text" class="easyui-textbox" size="20" id="tb1">
+                    </div>
+
+                    入库类别: <select id="cc" class="easyui-combobox" name="dept" style="width:200px;"
+                        data-options="editable:false,panelHeight:'auto'">
+                        <option></option>
+                        <option>bitem2</option>
+                        <option>bitem3</option>
+                        <option>ditem4</option>
+                        <option>eitem5</option>
+                    </select>
+
+                    <div id="txt_JBR" style="display: inline;">
+                        经办人: <input type="text" class="easyui-textbox" size="20" id="tb2">
+                    </div>
+
+
+                    应货商: <select id="cc" class="easyui-combobox" name="dept" style="width:200px;"
+                        data-options="editable:false,panelHeight:'auto'">
+                        <option></option>
+                        <option>bitem2</option>
+                        <option>bitem3</option>
+                        <option>ditem4</option>
+                        <option>eitem5</option>
+                    </select><br><br>
+
+                    <span style="vertical-align:top">备注信息：</span><input class="easyui-textbox"
+                        style="width:95%; height:70px">
+                </fieldset>
+            </form>
+            <!-- 页面顶部 模态窗口 -->
+            <div id="win1_1"></div>
+            <div id="win1_2"></div>
+        </div>
+
+
+        <!-- 网络表格 -->
+        <div id="table">
+            <table id="tt" title="进货明细" style="height: 400px;"></table>
+
+            <!-- 网络表格中的模态窗口 win2-->
+            <div id="win2" class="easyui-window" iconCls="icon-search" title="请输入商品">
+
+                <div style="width: 100%; height: 92%;">
+                    <!-- 网络表格--模态窗口--左边下拉菜单部分 -->
+                    <div id="win2_left"
+                        style="width:25%; height:97%; border:1px solid #B2CAEA; margin: 5px; float: left;">
+                        <ul id="win2_left_list" class="easyui-tree">
+                            <li>
+                                <span>所有分类</span>
+                                <ul>
+                                    <li id="win2_left_list_WPL"><span>物品类</span></li>
+                                    <li id="win2_left_list_YPL"><span>药品类</span></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- 网络表格--模态窗口--右边内容显示部分 -->
+                    <div style="width: 73%; height: 97%;  margin: 5px 5px 5px 0; float: right;">
+                        <!-- 网络表格--模态窗口--右边内容显示部分--网络表格（查询、添加） -->
+                        <table id="win2_right_table" style="width: 100%; height: 100%;" class="easyui-datagrid"
+                            toolbar="#win2_right_table_tb">
+                        </table>
+
+                        <div id="win2_right_table_tb" style="margin-top:3px;padding-bottom: 3px;">
+                            名称：<input id="itemid" style="width: 230px;" class="easyui-textbox" prompt='请输入关键词搜索'>
+                            <a href="#" id="win2_right_table_tb_chaxun" class="easyui-linkbutton"
+                                data-options="iconCls:'icon-search'" onclick="doSearch()">查询</a>
+                            <a href="#" id="win2_right_table_tb_xinzeng" class="easyui-linkbutton"
+                                data-options="iconCls:'icon-add'" onclick="newhang()">新增</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- win2 底部两个按钮 -->
+                <div id="win2_bottom" style="float: right; margin-right: 5px;">
+                    <a id="win2_btn_baocun" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-save'"
+                        onclick="win2_btn_baocun()">确定</a>
+                    <a id="win2_btn_guanbi" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'"
+                        onclick="win2_btn_guanbi()">关闭</a>
+                </div>
+
+
+                <!-- 模态窗口中的模态窗口 win3 -->
+                <div id="win3" class="easyui-window" iconCls="icon-edit" title="添加商品信息">
+                    <div id="win3_tt" class="easyui-tabs" style="width:100%;height:92%;">
+                        <!-- win3中-- 选项卡-- 基础信息 -->
+                        <div title="基本信息" style="padding:10px;display:none;">
+                            <form action="" id="win3_tt_form">
+                                <fieldset style="border: 1px solid rgb(172, 167, 167);">
+                                    <legend>基本信息</legend>
+                                    <span style="color: red;">商品名称：</span><input type="text"
+                                        style="width: 500px; margin-bottom: 5px;" class="easyui-textbox" name=""
+                                        id="win3_JCXX_SPMC"><br>
+                                    <div style="margin-top: 5px;">
+                                        <table>
+                                            <tr>
+                                                <td style="width: 280px;"><span style="color: red;">项目分类：</span><select
+                                                        id="win3_JCXX_SPFL" class="easyui-combobox" name=""
+                                                        style="width:150px;"
+                                                        data-options="editable:false,panelHeight:'auto'">
+                                                        <option>药品类</option>
+                                                        <option>物品类</option>
+                                                    </select></td>
+                                                <td><span>过期预警：</span><input type="text" style="width:150px"
+                                                        class="easyui-numberspinner"
+                                                        data-options="min:0,max:10,editable:false" value="0" name=""
+                                                        id=""></td>
+                                            </tr>
+                                            <tr>
+                                                <td><span style="color: red;">商品简称：</span><input type="text"
+                                                        style="width:150px" class="easyui-textbox" name=""
+                                                        id="win3_JCXX_SPJC"></td>
+                                                <td><span>规格型号：</span><input type="text" style="width:150px"
+                                                        class="easyui-textbox" name="" id="win3_JCXX_GGXH"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>开单提成：<input class="easyui-switchbutton"
+                                                        data-options="onText:'开启',offText:'关闭'" checked></td>
+                                                <td>费用类别：<select id="" class="easyui-combobox" name=""
+                                                        style="width:150px;"
+                                                        data-options="editable:false,panelHeight:'auto'">
+                                                        <option>住宿费</option>
+                                                        <option>伙食费</option>
+                                                    </select></td>
+                                            </tr>
+                                            <tr>
+                                                <td>药品类别：<input class="easyui-switchbutton"
+                                                        data-options="onText:'药品',offText:'物品'"></td>
+                                                <td>消费积分：<input class="easyui-switchbutton"
+                                                        data-options="onText:'开启',offText:'关闭'" checked></td>
+                                            </tr>
+                                        </table>
+
+                                        <span style=" vertical-align: top;">备注信息：</span><textarea name="" id=""
+                                            cols="30" rows="10" style="width: 75%; height: 100px; border-radius: 5px;"
+                                            class="easyui-textbox"></textarea>
+                                    </div>
+                                </fieldset>
+                            </form>
+                        </div>
+                        <!-- win3中-- 选项卡-- 单位价格 -->
+                        <div title="单位价格" style="overflow:auto;padding:10px;display:none;">
+                            <table id="win3_theUnitPrice"></table>
+                        </div>
+                        <!-- win3中-- 选项卡-- 库存预警 -->
+                        <div title="库存预警" style="padding:10px;display:none;">
+                            库存预警
+                        </div>
+                    </div>
+
+                    <!-- win3中底部按钮 -->
+                    <div style="float: right; margin-right: 5px; margin-top: 5px;">
+                        <a id="win3_btn_chuangjian" href="#" class="easyui-linkbutton"
+                            data-options="iconCls:'icon-save'" onclick="win3_btn_chuangjian()">创建</a>
+                        <a id="win3_btn_guanbi" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'"
+                            onclick="win3_btn_guanbi()">关闭</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+
+        <!-- 页面底部“保存”、“关闭”按钮部分 -->
+        <div style="width: 130px; margin-top: 10px; float: right;">
+            <a id="tt_btn_baocun" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a>
+            <a id="tt_btn_ganbi" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'">关闭</a>
+        </div>
+    </div>
+
+
+    <script>
+
+        // 页面顶部表单“进货仓库”、“经办人”图标弹窗
+        $('#tb1').textbox({
+            icons: [{
+                iconCls: 'icon-more-1'
+            }],
+            onClickIcon: function () {
+                var X = document.getElementById("txt_JHCK").getElementsByClassName("icon-more-1");
+                for (var j = 0; j < X.length; j++) {
+                    $("#win1_1").window({
+                        title: '进仓仓库',
+                        width: 300,
+                        height: 300,
+                        modal: true,
+                        // closed:true
+                    });
+                }
+            }
+        });
+
+        $('#tb2').textbox({
+            icons: [{
+                iconCls: 'icon-more-1'
+            }],
+            onClickIcon: function () {
+                var X = document.getElementById("txt_JBR").getElementsByClassName("icon-more-1");
+                for (var j = 0; j < X.length; j++) {
+                    $("#win1_2").window({
+                        title: '经办人',
+                        width: 300,
+                        height: 300,
+                        modal: true
+                    });
+                }
+            }
+
+        });
+
+    </script>
+
+    <script>
+        // 用于使得表格可以编写某一单元格
+        $.extend($.fn.datagrid.methods, {
+            editCell: function (jq, param) {
+                return jq.each(function () {
+                    var opts = $(this).datagrid('options');
+                    var fields = $(this).datagrid('getColumnFields', true).concat(
+                        $(this).datagrid('getColumnFields'));
+                    for (var i = 0; i < fields.length; i++) {
+                        var col = $(this).datagrid('getColumnOption', fields[i]);
+                        col.editor1 = col.editor;
+                        if (fields[i] != param.field) {
+                            col.editor = null;
+                        }
+                    }
+                    $(this).datagrid('beginEdit', param.index);
+                    for (var i = 0; i < fields.length; i++) {
+                        var col = $(this).datagrid('getColumnOption', fields[i]);
+                        col.editor = col.editor1;
+                    }
+                });
+            }
+        });
+
+        var editIndex = undefined;
+        //结束编辑 
+        function endEditing() {
+            if (editIndex == undefined) {
+                return true
+            }
+            if ($('#tt').datagrid('validateRow', editIndex)) {
+                $('#tt').datagrid('endEdit', editIndex);
+                editIndex = undefined;
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+
+
+        var tt_index;
+
+        // 页面中主表格
+        var Address = [{ "value": "1", "name": "CHINA" }, { "value": "2", "name": "USA" }, { "value": "3", "name": "Koren" }];
+        $('#tt').datagrid({
+            // url: 'datagrid_data.json',
+            // 单击单元格触发
+            onClickCell: function (index, field, value) {
+                // $(this).datagrid('beginEdit', index);
+                // $(this).datagrid('selectRow', index);
+                // var ed = $(this).datagrid('getEditor', { index: index, field: field });
+                if (endEditing()) {
+                    $(this).datagrid('selectRow', index).datagrid('editCell', {
+                        index: index,
+                        field: field
+                    });
+                    editIndex = index;
+                }
+            },
+            // 单击行触发
+            onClickRow: function (rowIndex, rowData) {
+            },
+            onSelect: function (rowIndex, rowData) {
+                // $(this).datagrid('beginEdit', rowIndex);
+                var M = document.getElementById("table").getElementsByClassName("icon-more-1");
+                console.log(M);
+                for (var i = 0; i < M.length; i++) {
+                    M[i].onclick = function () {
+                        tt_index = rowIndex;
+                        console.log(tt_index);
+                        $('#win2').window('open');
+
+                    };
+                }
+            },
+            // 列信息
+            columns: [[
+                { title: "编号", field: "N", checkbox: true },
+
+                {
+                    field: 'id', title: '商品名称', width: 330, align: 'center',
+                    // 变成可编写单元格
+                    editor: {
+                        // 加入可填写下拉框
+                        type: 'combogrid',
+                        options: {
+                            icons: [{
+                                iconCls: 'icon-more-1'
+                            }],
+                            panelWidth: 450,
+                            value: '006',
+                            idField: 'id',
+                            textField: 'id',
+                            // url: 'datagrid_data.json',
+                            data: [{ 'code': '1', 'id': 'vivo', 'Batch number': 'Y23L', 'SN': 'xxx' },
+                            { 'code': '2', 'id': '板蓝根', 'Batch number': '2333', 'SN': 'xxL' }],
+                            columns: [[
+                                { field: 'code', title: '序列', width: 60 },
+                                { field: 'id', title: '商品名称', width: 150 },
+                                { field: 'Batch number', title: '批号', width: 120 },
+                                { field: 'SN', title: 'SN码', width: 120 }
+                            ]]
+                        }
+                    }
+                },
+
+                {
+                    field: 'num', title: '数量', width: 80, align: 'center',
+                    editor: {
+                        // 验证框
+                        type: 'validatebox',
+                        options: {}
+                    }
+                },
+                {
+                    field: 'price', title: '单位', width: 110, align: 'center',
+                    sum: 'true',
+                    editor: {
+                        type: 'combobox',
+                        options: {
+                            // 下拉框添加下拉菜单，以供选择
+                            data: [{ "value": "支", "text": "支" }, { "value": "盒", "text": "盒" }],
+                            valueField: "value",
+                            textField: "text",
+                            panelHeight: 'auto'
+                        }
+                    }
+                },
+                { field: 'Unit unit conversion', title: '单位单位换算', width: 150, align: 'center', editor: { type: 'validatebox', options: {} } },
+                { field: 'total price', title: '总价', width: 100, align: 'center', editor: { type: 'validatebox', options: {} } },
+                { field: 'manufacturer', title: '生产厂家', width: 150, align: 'center', editor: { type: 'validatebox', options: {} } },
+                { field: 'date of production', title: '生产日期', width: 100, align: 'center', editor: { type: 'validatebox', options: {} } },
+                { field: 'Expiration time', title: '过期时间', width: 100, align: 'center', editor: { type: 'validatebox', options: {} } },
+                { field: 'Batch number', title: '批号', width: 150, align: 'center', editor: { type: 'validatebox', options: {} } },
+                { field: 'SN code', title: 'SN码', width: 100, align: 'center', editor: { type: 'validatebox', options: {} } },
+                { field: 'note', title: '备注', width: 150, align: 'center', editor: { type: 'validatebox', options: {} } }
+
+
+            ]],
+            checkOnSelect: true,
+            // 单选
+            singleSelect: true,
+            // 行号
+            rownumbers: true,
+            // 工具栏
+            toolbar:
+                [{
+                    // 加入“添加数据”工具按钮，单击添加行（默认在最后添加）
+                    text: '添加数据',
+                    iconCls: 'icon-add',
+                    handler: function () {
+                        $("#tt").datagrid("insertRow", {
+                            // index: 0,
+                            row: {}
+                        });
+
+                        var tt_rows = $('#tt').datagrid('getRows').length;
+                        console.log(tt_rows - 1);
+                        $('#tt').datagrid('selectRow', tt_rows - 1);
+                    }
+                }, {
+                    // 加入“删除商品”工具按钮
+                    text: '删除商品',
+                    iconCls: 'icon-remove',
+                    handler: function () {
+                        var row = $('#tt').datagrid('getSelected');
+                        if (row) {
+                            var rowIndex = $('#tt').datagrid('getRowIndex', row);
+                            // 得到选中的行索引值，并删除
+                            $('#tt').datagrid('deleteRow', rowIndex);
+                        }
+                    }
+                }],
+            onLoadSuccess: function (data) {
+
+            },
+            rowStyler: function (index, row) {
+
+            }
+        });
+    </script>
+
+    <script>
+        var win2_data = [
+            { "shangpin_id": "vivo", "specifications": "Y23L", "Classification_of_goods": "物品类", "inventory": "777" },
+            { "shangpin_id": "板蓝根", "specifications": "2333", "Classification_of_goods": "药品类", "inventory": "888" },
+            { "shangpin_id": "馒头", "specifications": "3222", "Classification_of_goods": "物品类", "inventory": "999" },
+            { "shangpin_id": "阿莫西林", "specifications": "6666", "Classification_of_goods": "药品类", "inventory": "666" },
+        ];
+
+        var win2_data_filter = win2_data;
+        win2_table(win2_data);
+
+
+
+        // 主页面模态窗口 win2
+        $('#win2').window({
+            width: 1100,
+            height: 500,
+            modal: true,
+            closed: true
+        });
+
+
+        var tree_txt;
+        $('#win2_left_list').tree({
+            onClick: function (node) {
+                // win左框分类“物品类”、“药品类”点击过滤
+                // console.log(node.text);
+                if (node.text == "物品类" || node.text == "药品类") {
+                    tree_txt = node.text;
+                    function filterByName(aim, Classification_of_goods) {
+                        return aim.filter(item => item.Classification_of_goods == Classification_of_goods)
+                    }
+
+                    win2_data_filter = filterByName(win2_data, node.text);
+                    // console.log(filterByName(win2_data, node.text));
+                    // console.log(win2_data_filter);
+
+                    win2_table(win2_data_filter);
+                } else {
+                    win2_table(win2_data);
+                }
+
+            }
+        });
+
+
+        function win2_table(win2_data_filter) {
+            // 主页面模态窗口win2---右边内容部分网络表格
+            $('#win2_right_table').datagrid({
+                data: win2_data_filter,
+                columns: [[
+                    { title: "编号", field: "N", checkbox: true },
+
+                    { field: 'shangpin_id', title: '商品名称', width: '40%', align: 'center' },
+                    { field: 'specifications', title: '规格型号', width: '20%', align: 'center' },
+                    { field: 'Classification_of_goods', title: '商品分类', width: '20%', align: 'center' },
+                    { field: 'inventory', title: '商品库存', width: '20%', align: 'center' },
+                ]],
+                rownumbers: true,
+                pagination: true,
+                singleSelect: true,
+                pageList: [5, 10, 20, 30, 40, 50, 100],// 可以设置每页记录条数的列表
+                pageSize: 50,// 每页显示的记录条数，默认为10
+
+            });
+        }
+
+
+        // 点击win2中“查询”按钮触发
+        function doSearch() {
+            var doSearch = $("#itemid").val();
+            console.log(doSearch);
+
+            function filterByName(aim, shangpin_id) {
+                return aim.filter(item => item.shangpin_id == shangpin_id)
+            }
+
+            win2_data_filter = filterByName(win2_data, doSearch);
+
+            win2_table(win2_data_filter);
+
+        };
+
+
+        // 单击win2中“新增”按钮触发
+        function newhang() {
+            $('#win3').window('open');
+        }
+
+        // win2保存按钮 
+        function win2_btn_baocun() {
+            var row = $("#win2_right_table").datagrid('getSelected');
+            console.log(row.shangpin_id);
+            $('#tt').datagrid('updateRow', {
+                index: tt_index,
+                row: {
+                    id: row.shangpin_id,
+                }
+            });
+
+            // $('#tt').datagrid('beginEdit', tt_index);
+            $("#win2").window('close');
+        }
+
+        // win2关闭按钮
+        function win2_btn_guanbi() {
+            $("#win2").window('close');
+        }
+    </script>
+
+    <script>
+        // 模态窗口中模态窗口 win3
+        $('#win3').window({
+            width: 700,
+            height: 500,
+            modal: true,
+            closed: true
+        });
+
+
+        var win3_editIndex = undefined;
+        //结束编辑 
+        function win3_endEditing() {
+            if (win3_editIndex == undefined) {
+                return true
+            }
+            if ($('#win3_theUnitPrice').datagrid('validateRow', win3_editIndex)) {
+                $('#win3_theUnitPrice').datagrid('endEdit', win3_editIndex);
+                win3_editIndex = undefined;
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        // 模态窗口win3中网络表格
+        $('#win3_theUnitPrice').datagrid({
+            onClickCell: function (index, field, value) {
+                // $(this).datagrid('beginEdit', index);
+                // var ed = $(this).datagrid('getEditor', { index: index, field: field });
+
+                if (win3_endEditing()) {
+                    $(this).datagrid('selectRow', index).datagrid('editCell', {
+                        index: index,
+                        field: field
+                    });
+                    win3_editIndex = index;
+                }
+            },
+            columns: [[
+                { title: "编号", field: "F", checkbox: true },
+                { field: 'win3_DWLX', title: '单位类型', width: 85, align: 'center', editor: { type: 'validatebox', options: {} } },
+                {
+                    field: 'win3_DWMC', title: '单位名称', width: 85, align: 'center',
+                    editor: {
+                        type: 'combobox',
+                        options: {
+                            // 下拉框添加下拉菜单，以供选择
+                            panelWidth: 85,
+                            panelHeight: 'auto',
+                            // textField: 'id',
+                            // url: 'datagrid_data.json',
+                            data: [{ "value": '支', "text": "支" }, { "value": '盒', "text": "盒" }],
+                            valueField: "value",
+                            textField: "text",
+                            // columns: [[
+                            //     { field: 'code', title: '序列', width: 60 },
+                            // ]]
+                        }
+                    }
+                },
+                { field: 'win3_DWGX', title: '单位关系', width: 85, align: 'center', editor: { type: 'validatebox', options: {} } },
+                { field: 'win3_HSGX', title: '换算关系', width: 85, align: 'center', editor: { type: 'validatebox', options: {} } },
+                { field: 'win3_YSJJ', title: '预设进价', width: 85, align: 'center', editor: { type: 'validatebox', options: {} } },
+                { field: 'win3_YSSJ', title: '预设售价', width: 85, align: 'center', editor: { type: 'validatebox', options: {} } },
+                { field: 'win3_TXM', title: '条形码', width: 90, align: 'center', editor: { type: 'validatebox', options: {} } }
+            ]],
+            singleSelect: true,
+            rownumbers: true,
+            toolbar: [
+                {
+                    text: '添加',
+                    iconCls: 'icon-add',
+                    handler: function () {
+
+                        var rowS = $('#win3_theUnitPrice').datagrid('getRows');
+                        console.log(rowS.length);
+
+                        if (rowS.length == 0) {
+                            $("#win3_theUnitPrice").datagrid("insertRow", {
+                                // index: 0,
+                                row: {
+                                    win3_DWLX: '基本单位',
+                                    win3_DWGX: 1,
+                                    win3_YSJJ: 0,
+                                    win3_YSSJ: 0
+
+                                }
+                            });
+                        } else if (rowS.length == 1) {
+                            $("#win3_theUnitPrice").datagrid("insertRow", {
+                                // index: 0,
+                                row: {
+                                    win3_DWLX: '辅助单位1',
+                                    win3_DWGX: 1,
+                                    win3_HSGX: '1=2瓶',
+                                    win3_YSJJ: 0,
+                                    win3_YSSJ: 0
+
+                                }
+                            });
+                        }
+
+
+
+                        // $("#win3_theUnitPrice").datagrid("beginEdit", 0);
+                    }
+                },
+                {
+                    text: '删除',
+                    iconCls: 'icon-remove',
+                    handler: function () {
+                        var row = $('#win3_theUnitPrice').datagrid('getSelected');
+                        if (row) {
+                            var rowIndex = $('#win3_theUnitPrice').datagrid('getRowIndex', row);
+                            // 得到选中的行索引值，并删除
+                            $('#win3_theUnitPrice').datagrid('deleteRow', rowIndex);
+                        }
+                    }
+                }
+            ]
+
+        });
+
+        // win3创建按钮
+        function win3_btn_chuangjian() {
+            if ($("#win3_JCXX_SPMC").val() == "" || $("#win3_JCXX_GGXH").val() == "") {
+                alert("商品名称和规格型号必须填写!");
+            } else {
+                $("#win2_right_table").datagrid('insertRow', {
+                    row: {
+                        shangpin_id: $('#win3_JCXX_SPMC').val(),
+                        specifications: $('#win3_JCXX_GGXH').val(),
+                        Classification_of_goods: $('#win3_JCXX_SPFL').val(),
+                        inventory: 7777
+                    }
+                });
+
+                // $("#win3_tt_form").form('clear');
+
+                $('#win3_JCXX_SPMC').textbox("setValue", "");
+                $('#win3_JCXX_GGXH').textbox("setValue", "");
+                $('#win3_JCXX_SPJC').textbox("setValue", "");
+
+                $('#win3').window('close');
+            }
+        }
+        // win3关闭按钮
+        function win3_btn_guanbi() {
+            $('#win3').window('close');
+        }
+    </script>
+</body>
+
+</html>
